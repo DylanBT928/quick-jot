@@ -1,54 +1,71 @@
-# C++ objects and libs
-*.slo
-*.lo
-*.o
-*.a
-*.la
-*.lai
-*.so
-*.so.*
-*.dll
-*.dylib
-
-# Qt-es
-object_script.*.Release
-object_script.*.Debug
-*_plugin_import.cpp
-/.qmake.cache
-/.qmake.stash
-*.pro.user
-*.pro.user.*
-*.qbs.user
-*.qbs.user.*
-*.moc
-moc_*.cpp
-moc_*.h
-qrc_*.cpp
-ui_*.h
-*.qmlc
-*.jsc
-Makefile*
-*build-*
-*.qm
-*.prl
-
-# Qt unit tests
-target_wrapper.*
-
-# QtCreator
+# === Qt Creator ===
 *.autosave
+*.user
+*.user.*
+*.pro.user
+*.qbs.user
+*.creator.*
+*.creator
 
-# QtCreator Qml
-*.qmlproject.user
-*.qmlproject.user.*
+# === Compiled Object Files ===
+*.o
+*.obj
+*.lo
+*.elf
 
-# QtCreator CMake
-CMakeLists.txt.user*
+# === Precompiled Headers ===
+*.gch
+*.pch
 
-# QtCreator 4.8< compilation database
-compile_commands.json
+# === Compiled Dynamic Libraries ===
+*.so
+*.dylib
+*.dll
 
-# QtCreator local machine specific files for imported projects
-*creator.user*
+# === Compiled Static Libraries ===
+*.lib
+*.a
 
-*_qmlcache.qrc
+# === Executables ===
+*.exe
+*.out
+*.app
+*.run
+
+# === Build directories ===
+build/
+build-*/
+debug/
+release/
+x64/
+x86/
+
+# === Qt's MOC, UIC, and RCC generated files ===
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+
+# === CMake (if used) ===
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CMakeLists.txt.user
+
+# === MacOS System Files ===
+.DS_Store
+
+# === Logs / Cache ===
+*.log
+*.tmp
+
+# === Backup Files ===
+*~
+*.swp
+*.bak
+*.old
+*.orig
+
+# === IDEs (Optional: CLion, VSCode, etc.) ===
+.idea/
+.vscode/
