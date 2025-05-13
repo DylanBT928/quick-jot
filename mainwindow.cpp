@@ -7,7 +7,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // load note
-    QFile file("note.txt");
+    QString notePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/QuickJot/";
+    QFile file(notePath + "note.txt");
     if (file.open(QIODevice::ReadOnly))
     {
         QTextStream stream(&file);
@@ -26,7 +27,9 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     // save note
-    QFile file("note.txt");
+    QString notePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/QuickJot/";
+    QDir().mkpath(notePath);
+    QFile file(notePath + "note.txt");
     if (file.open(QIODevice::WriteOnly))
     {
         QTextStream stream(&file);
