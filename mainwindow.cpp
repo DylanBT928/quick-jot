@@ -1,11 +1,18 @@
 #include "mainwindow.h"
-
-#include "./ui_mainwindow.h"
+#include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    // load note
+    QFile file("note.txt");
+    if (file.open(QIODevice::ReadOnly))
+    {
+        QTextStream stream(&file);
+        ui->textEdit->setPlainText(stream.readAll());
+    }
 
     // makes window stay on top
     connect(ui->checkBox, &QCheckBox::checkStateChanged, this, [this](int state)
@@ -14,6 +21,19 @@ MainWindow::MainWindow(QWidget *parent)
         this->setWindowFlag(Qt::WindowStaysOnTopHint, topMost);
         this->show();
     });
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    // save note
+    QFile file("note.txt");
+    if (file.open(QIODevice::WriteOnly))
+    {
+        QTextStream stream(&file);
+        stream << ui->textEdit->toPlainText();
+    }
+
+    QMainWindow::closeEvent(event);
 }
 
 MainWindow::~MainWindow() { delete ui; }

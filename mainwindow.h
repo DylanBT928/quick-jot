@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFile>
+#include <QTextStream>
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -17,6 +19,9 @@ class MainWindow : public QMainWindow
    public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+   protected:
+    void closeEvent(QCloseEvent *event) override;
 
    private:
     Ui::MainWindow *ui;
