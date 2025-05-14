@@ -1,6 +1,15 @@
 # Quick Jot 📝
 
-A minimalist sticky note app built with C++ and Qt 6.
+A minimalist sticky note app built with C++ and Qt 6. I built this for my girlfriend after she mentioned that her current notes app didn’t meet her needs. Quick Jot is designed to be lightweight, elegant, and always-on-top when you need it most.
+
+> Notes are automatically saved to your **Documents** folder in a subfolder called `QuickJot`, so your thoughts are always safe and easy to find.
+
+## ✨ Features
+
+- **Always on Top** option so your note never gets buried
+- Loads your previous note on startup
+- Automatically saves your notes on close
+- Fast, minimal, and privacy-friendly
 
 ## 📄 License
 
