@@ -12,14 +12,13 @@ MainWindow::MainWindow(QWidget *parent)
     if (file.open(QIODevice::ReadOnly))
     {
         QTextStream stream(&file);
-        ui->textEdit->setPlainText(stream.readAll());
+        ui->noteEditor->setPlainText(stream.readAll());
     }
 
     // makes window stay on top
-    connect(ui->checkBox, &QCheckBox::checkStateChanged, this, [this](int state)
+    connect(ui->pinButton, &QToolButton::toggled, this, [this](bool checked)
     {
-        bool topMost = (state == Qt::Checked);
-        this->setWindowFlag(Qt::WindowStaysOnTopHint, topMost);
+        this->setWindowFlag(Qt::WindowStaysOnTopHint, checked);
         this->show();
     });
 }
@@ -33,11 +32,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
     if (file.open(QIODevice::WriteOnly))
     {
         QTextStream stream(&file);
-        stream << ui->textEdit->toPlainText();
+        stream << ui->noteEditor->toPlainText();
     }
 
     QMainWindow::closeEvent(event);
 }
 
 MainWindow::~MainWindow() { delete ui; }
-
