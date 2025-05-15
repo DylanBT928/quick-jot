@@ -1,0 +1,29 @@
+{
+  "name": "quick-jot",
+  "version": "1.0.0",
+  "description": "A minimalist sticky note desktop app built with Electron and JavaScript. I built this for my girlfriend after she mentioned that her current notes app didn't meet her needs. Quick Jot is designed to be lightweight, elegant, and always on top when you need it most.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DylanBT928/quick-jot.git"
+  },
+  "keywords": [
+    "notes",
+    "electron"
+  ],
+  "author": "Dylan Tran",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DylanBT928/quick-jot/issues"
+  },
+  "homepage": "https://github.com/DylanBT928/quick-jot#readme",
+  "devDependencies": {
+    "electron": "^36.2.0"
+  },
+  "dependencies": {
+    "@electron/remote": "^2.1.2"
+  }
+}

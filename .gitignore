@@ -1,71 +1,27 @@
-# === Qt Creator ===
-*.autosave
-*.user
-*.user.*
-*.pro.user
-*.qbs.user
-*.creator.*
-*.creator
+# Node modules
+node_modules/
 
-# === Compiled Object Files ===
-*.o
-*.obj
-*.lo
-*.elf
+# Output logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# === Precompiled Headers ===
-*.gch
-*.pch
-
-# === Compiled Dynamic Libraries ===
-*.so
-*.dylib
-*.dll
-
-# === Compiled Static Libraries ===
-*.lib
-*.a
-
-# === Executables ===
-*.exe
-*.out
-*.app
-*.run
-
-# === Build directories ===
-build/
-build-*/
-debug/
-release/
-x64/
-x86/
-
-# === Qt's MOC, UIC, and RCC generated files ===
-moc_*.cpp
-ui_*.h
-qrc_*.cpp
-
-# === CMake (if used) ===
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-CMakeLists.txt.user
-
-# === MacOS System Files ===
+# Mac system files
 .DS_Store
 
-# === Logs / Cache ===
-*.log
-*.tmp
-
-# === Backup Files ===
-*~
-*.swp
-*.bak
-*.old
-*.orig
-
-# === IDEs (Optional: CLion, VSCode, etc.) ===
-.idea/
+# VS Code settings
 .vscode/
+
+# Optional: OS/Editor-specific
+Thumbs.db
+*.swp
+
+# Builds
+dist/
+build/
+out/
+*.asar
+
+# Environment files
+.env
+.env.local
