@@ -27,6 +27,7 @@ window.addEventListener("DOMContentLoaded", () => {
   function saveNoteTitle() {
     const value = noteTitleInput.value.trim() || "New Note";
     noteTitle.textContent = value;
+    noteTitle.setAttribute("title", value);
     noteTitle.style.display = "inline-block";
     noteTitleInput.style.display = "none";
   }
