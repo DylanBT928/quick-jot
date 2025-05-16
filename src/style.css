@@ -28,16 +28,26 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+#titleContainer {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
 }
 
 #noteTitle,
 #noteTitleInput {
+  flex: 1;
   font-size: 16px;
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
+  min-width: 200px;
   border: none;
   background: transparent;
   outline: none;
@@ -66,9 +76,13 @@ button:hover {
   background: #ddd;
 }
 
-#menuButton,
-#pinButton {
+#rightHeader {
   font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  padding-left: 10px;
 }
 
 #menuPopup {
