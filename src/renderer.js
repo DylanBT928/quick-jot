@@ -1,9 +1,36 @@
 window.addEventListener("DOMContentLoaded", () => {
+  const noteTitle = document.getElementById("noteTitle");
+  const noteTitleInput = document.getElementById("noteTitleInput");
+
   const pinButton = document.getElementById("pinButton");
   const menuButton = document.getElementById("menuButton");
   const menuPopup = document.getElementById("menuPopup");
 
   let isPinned = true;
+
+  noteTitle.addEventListener("click", () => {
+    noteTitleInput.value = noteTitle.textContent;
+    noteTitle.style.display = "none";
+    noteTitleInput.style.display = "inline-block";
+    noteTitleInput.focus();
+    noteTitleInput.select();
+  });
+
+  noteTitleInput.addEventListener("blur", saveNoteTitle);
+  noteTitleInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      saveNoteTitle();
+    }
+  });
+
+  function saveNoteTitle() {
+    const value = noteTitleInput.value.trim() || "New Note";
+    noteTitle.textContent = value;
+    noteTitle.style.display = "inline-block";
+    noteTitleInput.style.display = "none";
+  }
+
   pinButton.addEventListener("click", () => {
     isPinned = !isPinned;
     pinButton.textContent = isPinned ? "📌" : "📍";
