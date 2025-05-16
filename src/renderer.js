@@ -20,6 +20,10 @@ window.addEventListener("DOMContentLoaded", async () => {
   const backButton = document.getElementById("backButton");
 
   function updateNoteColor(colorClass) {
+    if (currentNote.color === colorClass) {
+      return;
+    }
+
     noteElement.classList.remove(
       "color-yellow",
       "color-blue",
@@ -48,11 +52,15 @@ window.addEventListener("DOMContentLoaded", async () => {
       default:
         noteElement.style.backgroundColor = "#fff9c4"; // Default yellow
         colorDot.style.backgroundColor = "#fff9c4";
+        colorClass = "color-yellow";
     }
 
     currentNote.color = colorClass;
     localStorage.setItem("currentNoteColor", colorClass);
-    saveCurrentNote();
+
+    if (currentNote.id) {
+      saveCurrentNote();
+    }
   }
 
   const savedColor = localStorage.getItem("currentNoteColor") || "color-yellow";
@@ -60,14 +68,18 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   const currentNoteId = localStorage.getItem("currentNoteId");
 
-  if (currentNoteId) {
+  if (currentNoteId && currentNoteId !== "null") {
     try {
       const loadedNote = await window.electronAPI.getNote(currentNoteId);
-      if (loadedNote) {
+      if (loadedNote && loadedNote.id) {
         currentNote = loadedNote;
         noteTitle.textContent = currentNote.title;
         noteElement.innerHTML = currentNote.content;
         pinButton.textContent = currentNote.pinned ? "📍" : "📌";
+
+        if (currentNote.color) {
+          updateNoteColor(currentNote.color);
+        }
       }
     } catch (error) {
       console.error("Error loading note:", error);
@@ -101,19 +113,51 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   window.electronAPI.onLoadNote(async (noteId) => {
     try {
+      if (!noteId) return;
+
       localStorage.setItem("currentNoteId", noteId);
       const loadedNote = await window.electronAPI.getNote(noteId);
       if (loadedNote) {
         currentNote = loadedNote;
         noteTitle.textContent = currentNote.title;
         noteElement.innerHTML = currentNote.content;
-
         pinButton.textContent = "📌";
-
         window.electronAPI.unpinWindow();
 
         const noteColor = loadedNote.color || "color-yellow";
-        updateNoteColor(noteColor);
+
+        noteElement.classList.remove(
+          "color-yellow",
+          "color-blue",
+          "color-green",
+          "color-orange",
+          "color-purple"
+        );
+
+        switch (noteColor) {
+          case "color-blue":
+            noteElement.style.backgroundColor = "#bbdefb";
+            colorDot.style.backgroundColor = "#bbdefb";
+            break;
+          case "color-green":
+            noteElement.style.backgroundColor = "#c8e6c9";
+            colorDot.style.backgroundColor = "#c8e6c9";
+            break;
+          case "color-orange":
+            noteElement.style.backgroundColor = "#ffccbc";
+            colorDot.style.backgroundColor = "#ffccbc";
+            break;
+          case "color-purple":
+            noteElement.style.backgroundColor = "#e1bee7";
+            colorDot.style.backgroundColor = "#e1bee7";
+            break;
+          default:
+            noteElement.style.backgroundColor = "#fff9c4"; // Default yellow
+            colorDot.style.backgroundColor = "#fff9c4";
+        }
+
+        currentNote.color = noteColor;
+        localStorage.setItem("currentNoteColor", noteColor);
       }
     } catch (error) {
       console.error("Error loading note:", error);
@@ -131,10 +175,12 @@ window.addEventListener("DOMContentLoaded", async () => {
     try {
       currentNote.content = noteElement.innerHTML;
       currentNote.updatedAt = new Date().toISOString();
-      if (!currentNote.id) {
+
+      if (!currentNote.id || currentNote.id === "null") {
         currentNote.id = Date.now().toString();
         currentNote.createdAt = new Date().toISOString();
       }
+
       await window.electronAPI.saveNote(currentNote);
       return currentNote.id;
     } catch (error) {
