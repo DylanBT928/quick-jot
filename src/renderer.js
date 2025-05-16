@@ -18,6 +18,35 @@ window.addEventListener("DOMContentLoaded", async () => {
   const noteElement = document.getElementById("note");
   const backButton = document.getElementById("backButton");
 
+  const savedColor = localStorage.getItem("currentNoteColor");
+
+  if (savedColor) {
+    noteElement.classList.remove(
+      "color-yellow",
+      "color-blue",
+      "color-green",
+      "color-orange",
+      "color-purple"
+    );
+
+    switch (savedColor) {
+      case "color-blue":
+        noteElement.style.backgroundColor = "#bbdefb";
+        break;
+      case "color-green":
+        noteElement.style.backgroundColor = "#c8e6c9";
+        break;
+      case "color-orange":
+        noteElement.style.backgroundColor = "#ffccbc";
+        break;
+      case "color-purple":
+        noteElement.style.backgroundColor = "#e1bee7";
+        break;
+      default:
+        noteElement.style.backgroundColor = "#fff9c4"; // Default yellow
+    }
+  }
+
   const currentNoteId = localStorage.getItem("currentNoteId");
 
   if (currentNoteId) {
@@ -43,11 +72,29 @@ window.addEventListener("DOMContentLoaded", async () => {
         noteTitle.textContent = currentNote.title;
         noteElement.innerHTML = currentNote.content;
 
-        // Always show unpinned icon regardless of what was saved
         pinButton.textContent = "📌";
 
-        // Make sure window is not pinned on load
         window.electronAPI.unpinWindow();
+
+        const savedColor = localStorage.getItem("currentNoteColor");
+        if (savedColor) {
+          switch (savedColor) {
+            case "color-blue":
+              noteElement.style.backgroundColor = "#bbdefb";
+              break;
+            case "color-green":
+              noteElement.style.backgroundColor = "#c8e6c9";
+              break;
+            case "color-orange":
+              noteElement.style.backgroundColor = "#ffccbc";
+              break;
+            case "color-purple":
+              noteElement.style.backgroundColor = "#e1bee7";
+              break;
+            default:
+              noteElement.style.backgroundColor = "#fff9c4";
+          }
+        }
       }
     } catch (error) {
       console.error("Error loading note:", error);

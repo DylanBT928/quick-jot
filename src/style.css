@@ -130,7 +130,7 @@ button:hover {
   outline: none;
   overflow-y: auto;
   min-height: 0;
-  background-color: #fff9c4; /* Light yellow like Sticky Notes */
+  background-color: #fff9c4;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
@@ -146,19 +146,19 @@ button:hover {
 /* notes.html */
 #notesContainer {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Exactly 2 columns of equal width */
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
   padding: 15px;
   overflow-y: auto;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-x: hidden;
   width: 100%;
   box-sizing: border-box;
 }
 
 .noteCard {
-  width: 100%; /* Take full width of grid cell */
-  height: 120px; /* Reduced height */
-  background-color: #fff9c4; /* Light yellow */
+  width: 100%;
+  height: 120px;
+  background-color: #fff9c4;
   border-radius: 2px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   padding: 14px;
@@ -169,7 +169,7 @@ button:hover {
   position: relative;
   margin-bottom: 0;
   overflow: hidden;
-  box-sizing: border-box; /* Include padding in width calculation */
+  box-sizing: border-box;
 }
 
 .noteCard:nth-child(3n + 1) {
@@ -209,7 +209,7 @@ button:hover {
   overflow: hidden;
   line-height: 1.3;
   display: -webkit-box;
-  -webkit-line-clamp: 4; /* Show fewer lines */
+  -webkit-line-clamp: 4;
   line-clamp: 4;
   -webkit-box-orient: vertical;
   flex: 1;
@@ -230,7 +230,7 @@ button:hover {
 }
 
 #newNoteButton {
-  background-color: #0078d7; /* Microsoft blue */
+  background-color: #0078d7;
   color: white;
   margin-left: 15px;
   padding: 8px 16px;
@@ -242,7 +242,6 @@ button:hover {
   background-color: #006ac1;
 }
 
-/* Header for notes.html */
 .headerBar {
   display: flex;
   justify-content: space-between;

@@ -43,7 +43,41 @@ async function displayNotes() {
       noteCard.appendChild(notePreview);
 
       noteCard.addEventListener("click", () => {
+        const colorClasses = [
+          "color-yellow",
+          "color-blue",
+          "color-green",
+          "color-orange",
+          "color-purple",
+        ];
+
+        let noteColorClass = "color-yellow";
+
+        if (
+          noteCard.classList.contains("noteCard:nth-child(3n+1)") ||
+          getComputedStyle(noteCard).backgroundColor === "rgb(187, 222, 251)"
+        ) {
+          noteColorClass = "color-blue";
+        } else if (
+          noteCard.classList.contains("noteCard:nth-child(3n+2)") ||
+          getComputedStyle(noteCard).backgroundColor === "rgb(200, 230, 201)"
+        ) {
+          noteColorClass = "color-green";
+        } else if (
+          noteCard.classList.contains("noteCard:nth-child(3n+3)") ||
+          getComputedStyle(noteCard).backgroundColor === "rgb(255, 204, 188)"
+        ) {
+          noteColorClass = "color-orange";
+        } else if (
+          noteCard.classList.contains("noteCard:nth-child(4n+4)") ||
+          getComputedStyle(noteCard).backgroundColor === "rgb(225, 190, 231)"
+        ) {
+          noteColorClass = "color-purple";
+        }
+
         localStorage.setItem("currentNoteId", note.id);
+        localStorage.setItem("currentNoteColor", noteColorClass);
+
         window.electronAPI.openNote(note.id);
       });
 
