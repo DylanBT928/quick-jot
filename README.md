@@ -1,14 +1,16 @@
 # Quick Jot 📝
 
-A minimalist sticky note desktop app built with **Electron** and **JavaScript**. I built this for my girlfriend after she mentioned that her current notes app didn’t meet her needs. Quick Jot is designed to be lightweight, elegant, and always on top when you need it most.
+A minimalist sticky note desktop app built with **Electron** and **JavaScript**. I built this for my girlfriend after she mentioned that her current notes app didn't meet her needs. Quick Jot is designed to be lightweight, elegant, and always on top when you need it most.
 
 > Notes are automatically saved to your **Documents** folder in a subfolder called `QuickJot`, so your thoughts are always safe and easy to find.
 
 ## ✨ Features
 
-- **Always on Top** option so your note never gets buried
-- Loads your previous note on startup
-- Automatically saves your notes on close
+- Always on Top option so your note never gets buried
+- Color Customization with 5 different note colors
+- Text Formatting (bold, italic, underline)
+- Notes Overview to easily browse and access all your notes
+- Auto-saving as you type
 - Fast, minimal, and privacy-friendly
 
 ## 🛠 Installation
