@@ -249,3 +249,80 @@ button:hover {
   padding: 10px 15px;
   margin-bottom: 5px;
 }
+
+:root {
+  --color-yellow: #fff9c4;
+  --color-blue: #bbdefb;
+  --color-green: #c8e6c9;
+  --color-orange: #ffccbc;
+  --color-purple: #e1bee7;
+}
+
+#colorPickerPopup {
+  position: absolute;
+  top: 45px;
+  right: 10px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px;
+  display: none;
+  z-index: 100;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 120px;
+  gap: 8px;
+}
+
+.color-picker-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.color-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--color-yellow);
+  transition: background-color 0.2s ease;
+}
+
+.color-option {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+}
+
+.color-option[data-color="color-yellow"] {
+  background-color: var(--color-yellow);
+}
+
+.color-option[data-color="color-blue"] {
+  background-color: var(--color-blue);
+}
+
+.color-option[data-color="color-green"] {
+  background-color: var(--color-green);
+}
+
+.color-option[data-color="color-orange"] {
+  background-color: var(--color-orange);
+}
+
+.color-option[data-color="color-purple"] {
+  background-color: var(--color-purple);
+}

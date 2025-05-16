@@ -13,14 +13,13 @@ window.addEventListener("DOMContentLoaded", async () => {
   const noteTitle = document.getElementById("noteTitle");
   const noteTitleInput = document.getElementById("noteTitleInput");
   const pinButton = document.getElementById("pinButton");
-  const menuButton = document.getElementById("menuButton");
-  const menuPopup = document.getElementById("menuPopup");
+  const colorPickerButton = document.getElementById("colorPickerButton");
+  const colorPickerPopup = document.getElementById("colorPickerPopup");
+  const colorDot = document.querySelector(".color-dot");
   const noteElement = document.getElementById("note");
   const backButton = document.getElementById("backButton");
 
-  const savedColor = localStorage.getItem("currentNoteColor");
-
-  if (savedColor) {
+  function updateNoteColor(colorClass) {
     noteElement.classList.remove(
       "color-yellow",
       "color-blue",
@@ -29,23 +28,35 @@ window.addEventListener("DOMContentLoaded", async () => {
       "color-purple"
     );
 
-    switch (savedColor) {
+    switch (colorClass) {
       case "color-blue":
         noteElement.style.backgroundColor = "#bbdefb";
+        colorDot.style.backgroundColor = "#bbdefb";
         break;
       case "color-green":
         noteElement.style.backgroundColor = "#c8e6c9";
+        colorDot.style.backgroundColor = "#c8e6c9";
         break;
       case "color-orange":
         noteElement.style.backgroundColor = "#ffccbc";
+        colorDot.style.backgroundColor = "#ffccbc";
         break;
       case "color-purple":
         noteElement.style.backgroundColor = "#e1bee7";
+        colorDot.style.backgroundColor = "#e1bee7";
         break;
       default:
         noteElement.style.backgroundColor = "#fff9c4"; // Default yellow
+        colorDot.style.backgroundColor = "#fff9c4";
     }
+
+    currentNote.color = colorClass;
+    localStorage.setItem("currentNoteColor", colorClass);
+    saveCurrentNote();
   }
+
+  const savedColor = localStorage.getItem("currentNoteColor") || "color-yellow";
+  updateNoteColor(savedColor);
 
   const currentNoteId = localStorage.getItem("currentNoteId");
 
@@ -63,6 +74,31 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  colorPickerButton.addEventListener("click", (e) => {
+    e.stopPropagation();
+    colorPickerPopup.style.display =
+      colorPickerPopup.style.display === "flex" ? "none" : "flex";
+  });
+
+  const colorOptions = document.querySelectorAll(".color-option");
+  colorOptions.forEach((option) => {
+    option.addEventListener("click", () => {
+      const colorClass = option.dataset.color;
+      updateNoteColor(colorClass);
+      colorPickerPopup.style.display = "none";
+    });
+  });
+
+  window.addEventListener("click", (e) => {
+    if (
+      colorPickerPopup.style.display === "flex" &&
+      !colorPickerPopup.contains(e.target) &&
+      e.target !== colorPickerButton
+    ) {
+      colorPickerPopup.style.display = "none";
+    }
+  });
+
   window.electronAPI.onLoadNote(async (noteId) => {
     try {
       localStorage.setItem("currentNoteId", noteId);
@@ -76,25 +112,8 @@ window.addEventListener("DOMContentLoaded", async () => {
 
         window.electronAPI.unpinWindow();
 
-        const savedColor = localStorage.getItem("currentNoteColor");
-        if (savedColor) {
-          switch (savedColor) {
-            case "color-blue":
-              noteElement.style.backgroundColor = "#bbdefb";
-              break;
-            case "color-green":
-              noteElement.style.backgroundColor = "#c8e6c9";
-              break;
-            case "color-orange":
-              noteElement.style.backgroundColor = "#ffccbc";
-              break;
-            case "color-purple":
-              noteElement.style.backgroundColor = "#e1bee7";
-              break;
-            default:
-              noteElement.style.backgroundColor = "#fff9c4";
-          }
-        }
+        const noteColor = loadedNote.color || "color-yellow";
+        updateNoteColor(noteColor);
       }
     } catch (error) {
       console.error("Error loading note:", error);
@@ -170,21 +189,6 @@ window.addEventListener("DOMContentLoaded", async () => {
       }
     });
   }
-
-  menuButton.addEventListener("click", (e) => {
-    menuPopup.style.display =
-      menuPopup.style.display === "block" ? "none" : "block";
-  });
-
-  window.addEventListener("click", (e) => {
-    if (
-      menuPopup.style.display === "block" &&
-      !menuPopup.contains(e.target) &&
-      e.target !== menuButton
-    ) {
-      menuPopup.style.display = "none";
-    }
-  });
 
   document.getElementById("boldButton").addEventListener("click", () => {
     document.execCommand("bold");
