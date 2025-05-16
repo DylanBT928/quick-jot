@@ -42,13 +42,6 @@ async function displayNotes() {
       noteCard.appendChild(noteTitle);
       noteCard.appendChild(notePreview);
 
-      if (note.pinned) {
-        const pinnedIcon = document.createElement("div");
-        pinnedIcon.className = "notePinned";
-        pinnedIcon.textContent = "📌";
-        noteCard.appendChild(pinnedIcon);
-      }
-
       noteCard.addEventListener("click", () => {
         localStorage.setItem("currentNoteId", note.id);
         window.electronAPI.openNote(note.id);

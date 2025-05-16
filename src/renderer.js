@@ -42,7 +42,12 @@ window.addEventListener("DOMContentLoaded", async () => {
         currentNote = loadedNote;
         noteTitle.textContent = currentNote.title;
         noteElement.innerHTML = currentNote.content;
-        pinButton.textContent = currentNote.pinned ? "📍" : "📌";
+
+        // Always show unpinned icon regardless of what was saved
+        pinButton.textContent = "📌";
+
+        // Make sure window is not pinned on load
+        window.electronAPI.unpinWindow();
       }
     } catch (error) {
       console.error("Error loading note:", error);
@@ -103,12 +108,21 @@ window.addEventListener("DOMContentLoaded", async () => {
     await saveCurrentNote();
   }
 
-  pinButton.addEventListener("click", async () => {
-    currentNote.pinned = !currentNote.pinned;
-    pinButton.textContent = currentNote.pinned ? "📍" : "📌";
-    await saveCurrentNote();
-    window.electronAPI.toggleAlwaysOnTop();
-  });
+  if (pinButton) {
+    pinButton.textContent = "📌";
+
+    pinButton.addEventListener("click", () => {
+      const isPinned = pinButton.textContent === "📍";
+
+      if (isPinned) {
+        pinButton.textContent = "📌";
+        window.electronAPI.pinWindow(false);
+      } else {
+        pinButton.textContent = "📍";
+        window.electronAPI.pinWindow(true);
+      }
+    });
+  }
 
   menuButton.addEventListener("click", (e) => {
     menuPopup.style.display =

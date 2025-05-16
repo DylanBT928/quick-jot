@@ -79,6 +79,7 @@ function createNoteEditorWindow(noteId) {
     maxWidth: 650,
     maxHeight: 650,
     resizable: true,
+    alwaysOnTop: false,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -127,6 +128,12 @@ app.on("activate", () => {
 ipcMain.on("toggleAlwaysOnTop", () => {
   const current = win.isAlwaysOnTop();
   win.setAlwaysOnTop(!current);
+});
+
+ipcMain.on("pinWindow", (event, shouldPin) => {
+  if (win) {
+    win.setAlwaysOnTop(shouldPin);
+  }
 });
 
 ipcMain.handle("saveNote", async (event, note) => {

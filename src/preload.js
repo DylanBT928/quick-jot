@@ -10,4 +10,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
   returnToNotes: () => ipcRenderer.send("returnToNotes"),
   onLoadNote: (callback) =>
     ipcRenderer.on("loadNote", (_, noteId) => callback(noteId)),
+  pinWindow: (shouldPin) => ipcRenderer.send("pinWindow", shouldPin),
+  unpinWindow: () => ipcRenderer.send("pinWindow", false),
 });
