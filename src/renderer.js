@@ -27,12 +27,27 @@ window.addEventListener("DOMContentLoaded", async () => {
         currentNote = loadedNote;
         noteTitle.textContent = currentNote.title;
         noteElement.innerHTML = currentNote.content;
-        pinButton.textContent = currentNote.pinned ? "📌" : "📍";
+        pinButton.textContent = currentNote.pinned ? "📍" : "📌";
       }
     } catch (error) {
       console.error("Error loading note:", error);
     }
   }
+
+  window.electronAPI.onLoadNote(async (noteId) => {
+    try {
+      localStorage.setItem("currentNoteId", noteId);
+      const loadedNote = await window.electronAPI.getNote(noteId);
+      if (loadedNote) {
+        currentNote = loadedNote;
+        noteTitle.textContent = currentNote.title;
+        noteElement.innerHTML = currentNote.content;
+        pinButton.textContent = currentNote.pinned ? "📍" : "📌";
+      }
+    } catch (error) {
+      console.error("Error loading note:", error);
+    }
+  });
 
   const autoSave = async () => {
     clearTimeout(saveTimeout);
@@ -90,7 +105,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   pinButton.addEventListener("click", async () => {
     currentNote.pinned = !currentNote.pinned;
-    pinButton.textContent = currentNote.pinned ? "📌" : "📍";
+    pinButton.textContent = currentNote.pinned ? "📍" : "📌";
     await saveCurrentNote();
     window.electronAPI.toggleAlwaysOnTop();
   });

@@ -79,7 +79,8 @@ document.getElementById("newNoteButton").addEventListener("click", async () => {
 
     await window.electronAPI.saveNote(newNote);
     localStorage.setItem("currentNoteId", newNote.id);
-    window.location.href = "index.html";
+
+    window.electronAPI.openNote(newNote.id);
   } catch (error) {
     console.error("Error creating new note:", error);
     alert("Error creating new note. Please try again.");

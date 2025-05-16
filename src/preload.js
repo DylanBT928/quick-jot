@@ -8,4 +8,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
   deleteNote: (id) => ipcRenderer.invoke("deleteNote", id),
   openNote: (id) => ipcRenderer.send("openNote", id),
   returnToNotes: () => ipcRenderer.send("returnToNotes"),
+  onLoadNote: (callback) =>
+    ipcRenderer.on("loadNote", (_, noteId) => callback(noteId)),
 });

@@ -5,6 +5,7 @@ const os = require("os");
 
 let win;
 let notesDir;
+let windowPosition = { x: undefined, y: undefined };
 
 function setupNotesDirectory() {
   const documentsPath = path.join(os.homedir(), "Documents");
@@ -43,7 +44,7 @@ function createWindow() {
 }
 
 function createNotesListWindow() {
-  win = new BrowserWindow({
+  const windowOptions = {
     width: 500,
     height: 500,
     resizable: false,
@@ -52,27 +53,52 @@ function createNotesListWindow() {
       contextIsolation: true,
       nodeIntegration: false,
     },
-  });
+  };
 
+  if (windowPosition.x !== undefined && windowPosition.y !== undefined) {
+    windowOptions.x = windowPosition.x;
+    windowOptions.y = windowPosition.y;
+  }
+
+  win = new BrowserWindow(windowOptions);
   win.loadFile("src/notes.html");
+
+  win.on("move", () => {
+    const position = win.getPosition();
+    windowPosition.x = position[0];
+    windowPosition.y = position[1];
+  });
 }
 
 function createNoteEditorWindow(noteId) {
-  win = new BrowserWindow({
+  const windowOptions = {
     width: 500,
     height: 500,
     minWidth: 350,
     minHeight: 300,
     maxWidth: 650,
     maxHeight: 650,
+    resizable: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       nodeIntegration: false,
     },
-  });
+  };
 
+  if (windowPosition.x !== undefined && windowPosition.y !== undefined) {
+    windowOptions.x = windowPosition.x;
+    windowOptions.y = windowPosition.y;
+  }
+
+  win = new BrowserWindow(windowOptions);
   win.loadFile("src/index.html");
+
+  win.on("move", () => {
+    const position = win.getPosition();
+    windowPosition.x = position[0];
+    windowPosition.y = position[1];
+  });
 
   if (noteId) {
     win.webContents.on("didFinishLoad", () => {
@@ -175,10 +201,21 @@ ipcMain.handle("deleteNote", async (event, id) => {
 });
 
 ipcMain.on("openNote", (event, noteId) => {
+  if (win) {
+    const position = win.getPosition();
+    windowPosition.x = position[0];
+    windowPosition.y = position[1];
+    win.close();
+  }
   createNoteEditorWindow(noteId);
 });
 
 ipcMain.on("returnToNotes", () => {
-  if (win) win.close();
+  if (win) {
+    const position = win.getPosition();
+    windowPosition.x = position[0];
+    windowPosition.y = position[1];
+    win.close();
+  }
   createNotesListWindow();
 });
