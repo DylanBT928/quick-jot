@@ -1,12 +1,67 @@
-window.addEventListener("DOMContentLoaded", () => {
+let currentNote = {
+  id: null,
+  title: "New Note",
+  content: "",
+  pinned: false,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+};
+
+let saveTimeout;
+
+window.addEventListener("DOMContentLoaded", async () => {
   const noteTitle = document.getElementById("noteTitle");
   const noteTitleInput = document.getElementById("noteTitleInput");
-
   const pinButton = document.getElementById("pinButton");
   const menuButton = document.getElementById("menuButton");
   const menuPopup = document.getElementById("menuPopup");
+  const noteElement = document.getElementById("note");
+  const backButton = document.getElementById("backButton");
 
-  let isPinned = true;
+  const currentNoteId = localStorage.getItem("currentNoteId");
+
+  if (currentNoteId) {
+    try {
+      const loadedNote = await window.electronAPI.getNote(currentNoteId);
+      if (loadedNote) {
+        currentNote = loadedNote;
+        noteTitle.textContent = currentNote.title;
+        noteElement.innerHTML = currentNote.content;
+        pinButton.textContent = currentNote.pinned ? "📌" : "📍";
+      }
+    } catch (error) {
+      console.error("Error loading note:", error);
+    }
+  }
+
+  const autoSave = async () => {
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(async () => {
+      await saveCurrentNote();
+    }, 500);
+  };
+
+  async function saveCurrentNote() {
+    try {
+      currentNote.content = noteElement.innerHTML;
+      currentNote.updatedAt = new Date().toISOString();
+      if (!currentNote.id) {
+        currentNote.id = Date.now().toString();
+        currentNote.createdAt = new Date().toISOString();
+      }
+      await window.electronAPI.saveNote(currentNote);
+      return currentNote.id;
+    } catch (error) {
+      console.error("Error saving note:", error);
+    }
+  }
+
+  noteElement.addEventListener("input", autoSave);
+
+  backButton.addEventListener("click", async () => {
+    await saveCurrentNote();
+    window.electronAPI.returnToNotes();
+  });
 
   noteTitle.addEventListener("click", () => {
     noteTitleInput.value = noteTitle.textContent;
@@ -24,22 +79,23 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  function saveNoteTitle() {
+  async function saveNoteTitle() {
     const value = noteTitleInput.value.trim() || "New Note";
     noteTitle.textContent = value;
-    noteTitle.setAttribute("title", value);
     noteTitle.style.display = "inline-block";
     noteTitleInput.style.display = "none";
+    currentNote.title = value;
+    await saveCurrentNote();
   }
 
-  pinButton.addEventListener("click", () => {
-    isPinned = !isPinned;
-    pinButton.textContent = isPinned ? "📌" : "📍";
+  pinButton.addEventListener("click", async () => {
+    currentNote.pinned = !currentNote.pinned;
+    pinButton.textContent = currentNote.pinned ? "📌" : "📍";
+    await saveCurrentNote();
     window.electronAPI.toggleAlwaysOnTop();
   });
 
   menuButton.addEventListener("click", (e) => {
-    const menuPopup = document.getElementById("menuPopup");
     menuPopup.style.display =
       menuPopup.style.display === "block" ? "none" : "block";
   });
@@ -56,13 +112,16 @@ window.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("boldButton").addEventListener("click", () => {
     document.execCommand("bold");
+    autoSave();
   });
 
   document.getElementById("italicButton").addEventListener("click", () => {
     document.execCommand("italic");
+    autoSave();
   });
 
   document.getElementById("underlineButton").addEventListener("click", () => {
     document.execCommand("underline");
+    autoSave();
   });
 });

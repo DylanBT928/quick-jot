@@ -15,6 +15,7 @@ body {
   overflow: hidden;
 }
 
+/* index.html */
 #topBar {
   display: flex;
   justify-content: space-between;
@@ -126,4 +127,77 @@ button:hover {
   gap: 10px;
   padding: 5px 0;
   border-top: 1px solid #eee;
+}
+
+/* notes.html */
+#notesContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+  overflow-y: auto;
+  justify-content: space-between;
+}
+
+.noteCard {
+  width: 200px;
+  height: 150px;
+  background-color: #ffc;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.noteCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.noteTitle {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notePreview {
+  font-size: 14px;
+  color: #555;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  line-clamp: 6;
+  -webkit-box-orient: vertical;
+  flex: 1;
+}
+
+.notePinned {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 14px;
+}
+
+.appTitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+#newNoteButton {
+  background-color: #4caf50;
+  color: white;
+  margin-left: 10px;
+}
+
+#newNoteButton:hover {
+  background-color: #45a049;
 }

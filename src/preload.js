@@ -1,5 +1,11 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("electronAPI", {
-  toggleAlwaysOnTop: () => ipcRenderer.send("toggle-always-on-top"),
+  toggleAlwaysOnTop: () => ipcRenderer.send("toggleAlwaysOnTop"),
+  saveNote: (note) => ipcRenderer.invoke("saveNote", note),
+  getAllNotes: () => ipcRenderer.invoke("getAllNotes"),
+  getNote: (id) => ipcRenderer.invoke("getNote", id),
+  deleteNote: (id) => ipcRenderer.invoke("deleteNote", id),
+  openNote: (id) => ipcRenderer.send("openNote", id),
+  returnToNotes: () => ipcRenderer.send("returnToNotes"),
 });
