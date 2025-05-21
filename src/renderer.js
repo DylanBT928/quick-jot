@@ -260,11 +260,14 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (!isInsideList()) {
       document.execCommand("insertUnorderedList");
 
-      const lists = noteElement.querySelectorAll("ul");
-      if (lists.length > 0) {
-        const newList = lists[lists.length - 1];
-        newList.style.listStyleType = bulletStyles[currentBulletStyle];
-      }
+      setTimeout(() => {
+        const lists = noteElement.querySelectorAll("ul");
+        if (lists.length > 0) {
+          const newList = lists[lists.length - 1];
+          newList.style.listStyleType = bulletStyles[currentBulletStyle];
+        }
+        autoSave();
+      }, 10);
     } else {
       const listItem = getListItemParent(
         selection.getRangeAt(0).startContainer
@@ -273,11 +276,11 @@ window.addEventListener("DOMContentLoaded", async () => {
         const parentList = listItem.parentNode;
         currentBulletStyle = (currentBulletStyle + 1) % bulletStyles.length;
         parentList.style.listStyleType = bulletStyles[currentBulletStyle];
+        autoSave();
       }
     }
 
     noteElement.focus();
-    autoSave();
   });
 
   document
@@ -287,6 +290,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
       if (!isInsideOrderedList()) {
         document.execCommand("insertOrderedList");
+        setTimeout(() => autoSave(), 10);
       } else {
         const listItem = getListItemParent(
           selection.getRangeAt(0).startContainer
@@ -307,11 +311,11 @@ window.addEventListener("DOMContentLoaded", async () => {
             (numberStyles.indexOf(currentStyle) + 1) % numberStyles.length;
 
           parentList.style.listStyleType = numberStyles[nextStyleIndex];
+          autoSave();
         }
       }
 
       noteElement.focus();
-      autoSave();
     });
 
   document
@@ -662,4 +666,26 @@ window.addEventListener("DOMContentLoaded", async () => {
       console.error("Error loading note:", error);
     }
   });
+
+  function isInsideList() {
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return false;
+
+    const range = selection.getRangeAt(0);
+    const listItem = getListItemParent(range.startContainer);
+    if (!listItem) return false;
+
+    return listItem.parentNode.nodeName === "UL";
+  }
+
+  function isInsideOrderedList() {
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return false;
+
+    const range = selection.getRangeAt(0);
+    const listItem = getListItemParent(range.startContainer);
+    if (!listItem) return false;
+
+    return listItem.parentNode.nodeName === "OL";
+  }
 });
