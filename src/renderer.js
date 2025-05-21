@@ -314,23 +314,98 @@ window.addEventListener("DOMContentLoaded", async () => {
       autoSave();
     });
 
-  function isInsideOrderedList() {
-    const selection = window.getSelection();
-    if (!selection.rangeCount) return false;
+  document
+    .getElementById("checkboxListButton")
+    .addEventListener("click", () => {
+      const selection = window.getSelection();
+      const range = selection.getRangeAt(0);
 
-    const range = selection.getRangeAt(0);
-    const listItem = getListItemParent(range.startContainer);
-    if (!listItem) return false;
+      const existingCheckbox = getParentWithClass(
+        range.startContainer,
+        "checklist-item"
+      );
 
-    return listItem.parentNode.nodeName === "OL";
+      if (existingCheckbox) {
+        return;
+      }
+
+      const listItem = getListItemParent(range.startContainer);
+      if (listItem) {
+        const textContent = listItem.textContent.trim();
+        createCheckboxItem(textContent, listItem);
+        listItem.parentNode.removeChild(listItem);
+      } else {
+        createCheckboxItem("", null);
+      }
+
+      noteElement.focus();
+      autoSave();
+    });
+
+  function createCheckboxItem(text, insertAfter) {
+    const checklistItem = document.createElement("div");
+    checklistItem.className = "checklist-item";
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "checklist-checkbox";
+
+    checkbox.addEventListener("change", function () {
+      const textSpan = this.nextElementSibling;
+      if (this.checked) {
+        textSpan.classList.add("checklist-checked");
+      } else {
+        textSpan.classList.remove("checklist-checked");
+      }
+      autoSave();
+    });
+
+    const textSpan = document.createElement("span");
+    textSpan.className = "checklist-text";
+    textSpan.contentEditable = true;
+    textSpan.textContent = text;
+
+    checklistItem.appendChild(checkbox);
+    checklistItem.appendChild(textSpan);
+
+    if (insertAfter) {
+      if (insertAfter.nextSibling) {
+        insertAfter.parentNode.insertBefore(
+          checklistItem,
+          insertAfter.nextSibling
+        );
+      } else {
+        insertAfter.parentNode.appendChild(checklistItem);
+      }
+    } else {
+      const selection = window.getSelection();
+      const range = selection.getRangeAt(0);
+
+      range.deleteContents();
+      range.insertNode(checklistItem);
+
+      const br = document.createElement("br");
+      checklistItem.parentNode.insertBefore(br, checklistItem.nextSibling);
+    }
+
+    textSpan.focus();
+    const newRange = document.createRange();
+    const sel = window.getSelection();
+    newRange.setStart(textSpan, 0);
+    newRange.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(newRange);
+
+    return checklistItem;
   }
 
-  function isInsideList() {
-    const selection = window.getSelection();
-    if (!selection.rangeCount) return false;
-
-    const range = selection.getRangeAt(0);
-    return getListItemParent(range.startContainer) !== null;
+  function getParentWithClass(node, className) {
+    while (node && node !== noteElement) {
+      if (node.classList && node.classList.contains(className)) {
+        return node;
+      }
+      node = node.parentNode;
+    }
+    return null;
   }
 
   noteElement.addEventListener("keydown", function (e) {
@@ -353,6 +428,26 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (e.key === "Enter") {
       const selection = window.getSelection();
       const range = selection.getRangeAt(0);
+
+      const checklistItem = getParentWithClass(
+        range.startContainer,
+        "checklist-item"
+      );
+      if (checklistItem) {
+        e.preventDefault();
+
+        const textSpan = checklistItem.querySelector(".checklist-text");
+        const text = textSpan.textContent.trim();
+
+        const newChecklistItem = createCheckboxItem("", checklistItem);
+
+        if (text === "") {
+          checklistItem.parentNode.removeChild(checklistItem);
+        }
+
+        autoSave();
+        return;
+      }
 
       const listItem = getListItemParent(range.startContainer);
       if (listItem) {
@@ -489,6 +584,79 @@ window.addEventListener("DOMContentLoaded", async () => {
         localStorage.setItem("currentNoteColor", noteColor);
 
         setTimeout(enhanceListBehavior, 100);
+      }
+    } catch (error) {
+      console.error("Error loading note:", error);
+    }
+  });
+
+  function restoreCheckboxFunctionality() {
+    const checkboxes = noteElement.querySelectorAll(".checklist-checkbox");
+    checkboxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", function () {
+        const textSpan = this.nextElementSibling;
+        if (this.checked) {
+          textSpan.classList.add("checklist-checked");
+        } else {
+          textSpan.classList.remove("checklist-checked");
+        }
+        autoSave();
+      });
+    });
+  }
+
+  window.electronAPI.onLoadNote(async (noteId) => {
+    try {
+      if (!noteId) return;
+
+      localStorage.setItem("currentNoteId", noteId);
+      const loadedNote = await window.electronAPI.getNote(noteId);
+      if (loadedNote) {
+        currentNote = loadedNote;
+        noteTitle.textContent = currentNote.title;
+        noteElement.innerHTML = currentNote.content;
+        pinButton.textContent = "📌";
+        window.electronAPI.unpinWindow();
+
+        const noteColor = loadedNote.color || "color-yellow";
+
+        noteElement.classList.remove(
+          "color-yellow",
+          "color-blue",
+          "color-green",
+          "color-orange",
+          "color-purple"
+        );
+
+        switch (noteColor) {
+          case "color-blue":
+            noteElement.style.backgroundColor = "#bbdefb";
+            colorDot.style.backgroundColor = "#bbdefb";
+            break;
+          case "color-green":
+            noteElement.style.backgroundColor = "#c8e6c9";
+            colorDot.style.backgroundColor = "#c8e6c9";
+            break;
+          case "color-orange":
+            noteElement.style.backgroundColor = "#ffccbc";
+            colorDot.style.backgroundColor = "#ffccbc";
+            break;
+          case "color-purple":
+            noteElement.style.backgroundColor = "#e1bee7";
+            colorDot.style.backgroundColor = "#e1bee7";
+            break;
+          default:
+            noteElement.style.backgroundColor = "#fff9c4";
+            colorDot.style.backgroundColor = "#fff9c4";
+        }
+
+        currentNote.color = noteColor;
+        localStorage.setItem("currentNoteColor", noteColor);
+
+        setTimeout(() => {
+          restoreCheckboxFunctionality();
+          enhanceListBehavior();
+        }, 100);
       }
     } catch (error) {
       console.error("Error loading note:", error);
