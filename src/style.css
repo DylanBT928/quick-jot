@@ -335,17 +335,52 @@ button:hover {
 
 #note li {
   margin: 4px 0;
-  min-height: 1.2em; /* Ensures empty list items still have height */
+  min-height: 1.2em;
 }
 
-/* Enhanced visual feedback for list items */
 #note li:hover {
   background-color: rgba(0, 0, 0, 0.03);
 }
 
-/* Style for the bullet list button */
 #bulletListButton {
   font-size: 18px;
+  font-weight: bold;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+#note ol {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+#note ol li {
+  margin: 4px 0;
+  min-height: 1.2em;
+}
+
+#note ol[style*="list-style-type: decimal"] > li {
+  list-style-type: decimal;
+}
+
+#note ol[style*="list-style-type: lower-alpha"] > li {
+  list-style-type: lower-alpha;
+}
+
+#note ol[style*="list-style-type: upper-alpha"] > li {
+  list-style-type: upper-alpha;
+}
+
+#note ol[style*="list-style-type: lower-roman"] > li {
+  list-style-type: lower-roman;
+}
+
+#note ol[style*="list-style-type: upper-roman"] > li {
+  list-style-type: upper-roman;
+}
+
+#numberedListButton {
+  font-size: 16px;
   font-weight: bold;
   padding-top: 0;
   padding-bottom: 0;

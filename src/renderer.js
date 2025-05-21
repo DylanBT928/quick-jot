@@ -53,7 +53,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         colorDot.style.backgroundColor = "#e1bee7";
         break;
       default:
-        noteElement.style.backgroundColor = "#fff9c4"; // Default yellow
+        noteElement.style.backgroundColor = "#fff9c4";
         colorDot.style.backgroundColor = "#fff9c4";
         colorClass = "color-yellow";
     }
@@ -155,7 +155,7 @@ window.addEventListener("DOMContentLoaded", async () => {
             colorDot.style.backgroundColor = "#e1bee7";
             break;
           default:
-            noteElement.style.backgroundColor = "#fff9c4"; // Default yellow
+            noteElement.style.backgroundColor = "#fff9c4";
             colorDot.style.backgroundColor = "#fff9c4";
         }
 
@@ -280,6 +280,51 @@ window.addEventListener("DOMContentLoaded", async () => {
     autoSave();
   });
 
+  document
+    .getElementById("numberedListButton")
+    .addEventListener("click", () => {
+      const selection = window.getSelection();
+
+      if (!isInsideOrderedList()) {
+        document.execCommand("insertOrderedList");
+      } else {
+        const listItem = getListItemParent(
+          selection.getRangeAt(0).startContainer
+        );
+        if (listItem) {
+          const parentList = listItem.parentNode;
+
+          const numberStyles = [
+            "decimal",
+            "lower-alpha",
+            "upper-alpha",
+            "lower-roman",
+            "upper-roman",
+          ];
+
+          let currentStyle = parentList.style.listStyleType || "decimal";
+          let nextStyleIndex =
+            (numberStyles.indexOf(currentStyle) + 1) % numberStyles.length;
+
+          parentList.style.listStyleType = numberStyles[nextStyleIndex];
+        }
+      }
+
+      noteElement.focus();
+      autoSave();
+    });
+
+  function isInsideOrderedList() {
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return false;
+
+    const range = selection.getRangeAt(0);
+    const listItem = getListItemParent(range.startContainer);
+    if (!listItem) return false;
+
+    return listItem.parentNode.nodeName === "OL";
+  }
+
   function isInsideList() {
     const selection = window.getSelection();
     if (!selection.rangeCount) return false;
@@ -380,10 +425,17 @@ window.addEventListener("DOMContentLoaded", async () => {
       }
     });
 
-    const lists = noteElement.querySelectorAll("ul");
-    lists.forEach((list) => {
+    const unorderedLists = noteElement.querySelectorAll("ul");
+    unorderedLists.forEach((list) => {
       if (!list.style.listStyleType) {
         list.style.listStyleType = "disc";
+      }
+    });
+
+    const orderedLists = noteElement.querySelectorAll("ol");
+    orderedLists.forEach((list) => {
+      if (!list.style.listStyleType) {
+        list.style.listStyleType = "decimal";
       }
     });
   }
@@ -429,7 +481,7 @@ window.addEventListener("DOMContentLoaded", async () => {
             colorDot.style.backgroundColor = "#e1bee7";
             break;
           default:
-            noteElement.style.backgroundColor = "#fff9c4"; // Default yellow
+            noteElement.style.backgroundColor = "#fff9c4";
             colorDot.style.backgroundColor = "#fff9c4";
         }
 

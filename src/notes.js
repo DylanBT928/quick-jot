@@ -41,7 +41,7 @@ async function displayNotes() {
             noteCard.style.backgroundColor = "#e1bee7";
             break;
           default:
-            noteCard.style.backgroundColor = "#fff9c4"; // Default yellow
+            noteCard.style.backgroundColor = "#fff9c4";
         }
       } else {
         const colorOptions = [
