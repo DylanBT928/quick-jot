@@ -3,9 +3,21 @@ const path = require("path");
 const fs = require("fs");
 const os = require("os");
 
+app.name = "Quick Jot";
+app.setName("Quick Jot");
+
 let win;
 let notesDir;
 let windowPosition = { x: undefined, y: undefined };
+
+let iconPath;
+if (process.platform === "darwin") {
+  iconPath = path.join(__dirname, "../assets/mac/icon.icns");
+} else if (process.platform === "win32") {
+  iconPath = path.join(__dirname, "../assets/win/icon.ico");
+} else {
+  iconPath = path.join(__dirname, "../assets/png/512x512.png");
+}
 
 function setupNotesDirectory() {
   const documentsPath = path.join(os.homedir(), "Documents");
@@ -29,6 +41,7 @@ function createWindow() {
     minHeight: 300,
     maxWidth: 650,
     maxHeight: 650,
+    icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -48,6 +61,7 @@ function createNotesListWindow() {
     width: 500,
     height: 500,
     resizable: false,
+    icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -80,6 +94,7 @@ function createNoteEditorWindow(noteId) {
     maxHeight: 650,
     resizable: true,
     alwaysOnTop: false,
+    icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -106,6 +121,11 @@ function createNoteEditorWindow(noteId) {
       win.webContents.send("loadNote", noteId);
     });
   }
+}
+
+// Set app icon for macOS dock
+if (process.platform === "darwin") {
+  app.dock.setIcon(path.join(__dirname, "../assets/png/512x512.png"));
 }
 
 app.whenReady().then(() => {

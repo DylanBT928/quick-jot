@@ -1,10 +1,14 @@
 {
   "name": "quick-jot",
+  "productName": "Quick Jot",
   "version": "1.0.0",
   "description": "A minimalist sticky note desktop app built with Electron and JavaScript. I built this for my girlfriend after she mentioned that her current notes app didn't meet her needs. Quick Jot is designed to be lightweight, elegant, and always on top when you need it most.",
   "main": "src/main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder build --mac --win",
+    "build:mac": "electron-builder build --mac",
+    "build:win": "electron-builder build --win --x64"
   },
   "repository": {
     "type": "git",
@@ -21,9 +25,41 @@
   },
   "homepage": "https://github.com/DylanBT928/quick-jot#readme",
   "devDependencies": {
-    "electron": "^36.2.0"
+    "electron": "^36.2.0",
+    "electron-builder": "^26.0.12"
   },
   "dependencies": {
     "@electron/remote": "^2.1.2"
+  },
+  "build": {
+    "appId": "com.dylantran.quickjot",
+    "productName": "Quick Jot",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/mac/icon.icns"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/win/icon.ico"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/png/icon.png"
+    }
   }
 }
