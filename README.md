@@ -9,6 +9,7 @@ A minimalist sticky note desktop app built with **Electron** and **JavaScript**.
 - Always on Top option so your note never gets buried
 - Color Customization with 5 different note colors
 - Text Formatting (bold, italic, underline)
+- Rech Text Organization (bullet points, numbered lists, checkboxes)
 - Notes Overview to easily browse and access all your notes
 - Auto-saving as you type
 - Fast, minimal, and privacy-friendly
