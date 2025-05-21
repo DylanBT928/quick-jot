@@ -326,3 +326,34 @@ button:hover {
 .color-option[data-color="color-purple"] {
   background-color: var(--color-purple);
 }
+
+#note ul,
+#note ol {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+#note li {
+  margin: 4px 0;
+  min-height: 1.2em; /* Ensures empty list items still have height */
+}
+
+/* Enhanced visual feedback for list items */
+#note li:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Style for the bullet list button */
+#bulletListButton {
+  font-size: 18px;
+  font-weight: bold;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.separator {
+  width: 1px;
+  height: 20px;
+  background-color: #ccc;
+  margin: 0 8px;
+}

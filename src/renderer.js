@@ -9,6 +9,9 @@ let currentNote = {
 
 let saveTimeout;
 
+let currentBulletStyle = 0;
+const bulletStyles = ["disc", "circle", "square"];
+
 window.addEventListener("DOMContentLoaded", async () => {
   const noteTitle = document.getElementById("noteTitle");
   const noteTitleInput = document.getElementById("noteTitleInput");
@@ -249,5 +252,194 @@ window.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("underlineButton").addEventListener("click", () => {
     document.execCommand("underline");
     autoSave();
+  });
+
+  document.getElementById("bulletListButton").addEventListener("click", () => {
+    const selection = window.getSelection();
+
+    if (!isInsideList()) {
+      document.execCommand("insertUnorderedList");
+
+      const lists = noteElement.querySelectorAll("ul");
+      if (lists.length > 0) {
+        const newList = lists[lists.length - 1];
+        newList.style.listStyleType = bulletStyles[currentBulletStyle];
+      }
+    } else {
+      const listItem = getListItemParent(
+        selection.getRangeAt(0).startContainer
+      );
+      if (listItem) {
+        const parentList = listItem.parentNode;
+        currentBulletStyle = (currentBulletStyle + 1) % bulletStyles.length;
+        parentList.style.listStyleType = bulletStyles[currentBulletStyle];
+      }
+    }
+
+    noteElement.focus();
+    autoSave();
+  });
+
+  function isInsideList() {
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return false;
+
+    const range = selection.getRangeAt(0);
+    return getListItemParent(range.startContainer) !== null;
+  }
+
+  noteElement.addEventListener("keydown", function (e) {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const selection = window.getSelection();
+      const range = selection.getRangeAt(0);
+
+      const listItem = getListItemParent(range.startContainer);
+      if (listItem) {
+        if (e.shiftKey) {
+          document.execCommand("outdent");
+        } else {
+          document.execCommand("indent");
+        }
+        autoSave();
+      }
+    }
+
+    if (e.key === "Enter") {
+      const selection = window.getSelection();
+      const range = selection.getRangeAt(0);
+
+      const listItem = getListItemParent(range.startContainer);
+      if (listItem) {
+        const textContent = listItem.textContent.trim();
+
+        if (textContent === "") {
+          e.preventDefault();
+
+          const parentList = listItem.parentNode;
+          const newParagraph = document.createElement("p");
+          newParagraph.innerHTML = "<br>";
+
+          if (parentList.children.length === 1) {
+            if (parentList.nextSibling) {
+              parentList.parentNode.insertBefore(
+                newParagraph,
+                parentList.nextSibling
+              );
+            } else {
+              parentList.parentNode.appendChild(newParagraph);
+            }
+
+            parentList.parentNode.removeChild(parentList);
+
+            const newRange = document.createRange();
+            newRange.setStart(newParagraph, 0);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+          } else {
+            const nextSibling = listItem.nextSibling;
+            if (nextSibling) {
+              parentList.insertBefore(newParagraph, nextSibling);
+            } else {
+              parentList.parentNode.insertBefore(
+                newParagraph,
+                parentList.nextSibling
+              );
+            }
+
+            parentList.removeChild(listItem);
+
+            const newRange = document.createRange();
+            newRange.setStart(newParagraph, 0);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+          }
+
+          autoSave();
+        }
+      }
+    }
+  });
+
+  function getListItemParent(node) {
+    while (node && node !== noteElement) {
+      if (node.nodeName === "LI") {
+        return node;
+      }
+      node = node.parentNode;
+    }
+    return null;
+  }
+
+  function enhanceListBehavior() {
+    const listItems = noteElement.querySelectorAll("li");
+
+    listItems.forEach((item) => {
+      if (!item.style.minHeight) {
+        item.style.minHeight = "1.2em";
+      }
+    });
+
+    const lists = noteElement.querySelectorAll("ul");
+    lists.forEach((list) => {
+      if (!list.style.listStyleType) {
+        list.style.listStyleType = "disc";
+      }
+    });
+  }
+
+  window.electronAPI.onLoadNote(async (noteId) => {
+    try {
+      if (!noteId) return;
+
+      localStorage.setItem("currentNoteId", noteId);
+      const loadedNote = await window.electronAPI.getNote(noteId);
+      if (loadedNote) {
+        currentNote = loadedNote;
+        noteTitle.textContent = currentNote.title;
+        noteElement.innerHTML = currentNote.content;
+        pinButton.textContent = "📌";
+        window.electronAPI.unpinWindow();
+
+        const noteColor = loadedNote.color || "color-yellow";
+
+        noteElement.classList.remove(
+          "color-yellow",
+          "color-blue",
+          "color-green",
+          "color-orange",
+          "color-purple"
+        );
+
+        switch (noteColor) {
+          case "color-blue":
+            noteElement.style.backgroundColor = "#bbdefb";
+            colorDot.style.backgroundColor = "#bbdefb";
+            break;
+          case "color-green":
+            noteElement.style.backgroundColor = "#c8e6c9";
+            colorDot.style.backgroundColor = "#c8e6c9";
+            break;
+          case "color-orange":
+            noteElement.style.backgroundColor = "#ffccbc";
+            colorDot.style.backgroundColor = "#ffccbc";
+            break;
+          case "color-purple":
+            noteElement.style.backgroundColor = "#e1bee7";
+            colorDot.style.backgroundColor = "#e1bee7";
+            break;
+          default:
+            noteElement.style.backgroundColor = "#fff9c4"; // Default yellow
+            colorDot.style.backgroundColor = "#fff9c4";
+        }
+
+        currentNote.color = noteColor;
+        localStorage.setItem("currentNoteColor", noteColor);
+
+        setTimeout(enhanceListBehavior, 100);
+      }
+    } catch (error) {
+      console.error("Error loading note:", error);
+    }
   });
 });
